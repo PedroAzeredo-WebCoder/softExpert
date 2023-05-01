@@ -1,18 +1,11 @@
 require("jquery");
 require("bootstrap");
 require("@fortawesome/fontawesome-free");
-require("slick-carousel");
 require("jquery-mask-plugin/dist/jquery.mask.min");
 import AOS from "aos";
 import Quill from "quill";
-import Chart from "chart.js";
 require("sweetalert2/dist/sweetalert2.all.min");
 require("jquery-maskmoney/dist/jquery.maskMoney.min");
-import { Calendar } from '@fullcalendar/core';
-import interactionPlugin from '@fullcalendar/interaction';
-import dayGridPlugin from '@fullcalendar/daygrid';
-import timeGridPlugin from '@fullcalendar/timegrid';
-import listPlugin from '@fullcalendar/list';
 
 window._ = require("lodash");
 
@@ -419,4 +412,52 @@ jQuery(function () {
     editorCustom.dataset.toolbaroptions = toolbarOptionsCustom;
     initializeEditors();
   }
+
+  $(function () {
+    const countValorQtdElements = $(".count-valor-qtd");
+    const quantityInput = $("#quantity-input");
+    const percentual = $("#percentual-qtd").data("percentual");
+
+    function updateValor() {
+      const quantidade = quantityInput.val();
+      const valor = parseFloat(countValorQtdElements.data("valor"));
+      const novoValor = valor * quantidade;
+      const novoValorPercentual = novoValor * percentual;
+      const formattedValor = novoValor.toLocaleString("pt-BR", {
+        minimumFractionDigits: 2,
+      });
+      const valorAdicional = novoValorPercentual.toLocaleString("pt-BR", {
+        minimumFractionDigits: 2,
+      });
+      countValorQtdElements.text(`R$ ${formattedValor}`);
+      $("#qtd").text(quantidade);
+      $("#percentual-qtd").text(`R$ ${valorAdicional}`);
+    }
+
+    function increaseQuantity() {
+      let value = parseInt(quantityInput.val());
+      const maxQuantity = parseInt(quantityInput.data("quantidade"));
+      if (value < maxQuantity) {
+        quantityInput.val(value + 1);
+        updateValor();
+      }
+    }
+
+    function decreaseQuantity() {
+      let value = parseInt(quantityInput.val());
+      if (value > 1) {
+        quantityInput.val(value - 1);
+        updateValor();
+      }
+    }
+
+    $("#add-btn").on("click", increaseQuantity);
+
+    $("#subtract-btn").on("click", decreaseQuantity);
+
+    quantityInput.on("input", updateValor);
+
+    // Call `updateValor()` initially to set the default values
+    updateValor();
+  });
 });

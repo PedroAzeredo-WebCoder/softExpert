@@ -40,12 +40,6 @@ mix.ImageWebp({
 mix.copyDirectory('resources/img', dirRaiz + '/images');
 
 /**
- * Slick Images
- */
-mix.copyDirectory('node_modules/slick-carousel/slick/fonts/', dirRaiz + '/fonts');
-mix.copyDirectory('node_modules/slick-carousel/slick/ajax-loader.gif', dirRaiz + '/img');
-
-/**
  *
  * Arquivos de fontes
  */
