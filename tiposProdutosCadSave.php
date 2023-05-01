@@ -7,6 +7,7 @@ writeLogs(print_r($_POST, true), "access");
 
 $cad_tiposProdutos_id   = getParam("cad_tiposProdutos_id");
 $f_nome                 = getParam("f_nome");
+$f_percentual_imposto   = str_replace("%", "", getParam("f_porcentagem"));
 $f_descricao            = getParam("f_descricao");
 $f_ativo                = getParam("f_ativo");
 
@@ -17,16 +18,18 @@ if ($f_ativo == "on") {
 }
 
 $dados = array(
-    "id"              => $cad_tiposProdutos_id,
-    "nome"            => $f_nome,
-    "descricao"       => $f_descricao,
-    "status"          => $f_ativo
+    "id"                    => $cad_tiposProdutos_id,
+    "nome"                  => $f_nome,
+    "percentual_imposto"    => $f_percentual_imposto,
+    "descricao"             => $f_descricao,
+    "status"                => $f_ativo
 );
 
 if (!empty($cad_tiposProdutos_id)) {
     $sql_update = "
 		UPDATE cad_tipo_produto SET
             nome = :nome,
+            percentual_imposto = :percentual_imposto,
 			descricao = :descricao,
 			status = :status
         WHERE
@@ -52,11 +55,13 @@ if (!empty($cad_tiposProdutos_id)) {
 			INSERT INTO cad_tipo_produto (
 				id, 
 				nome, 
+                percentual_imposto,
                 descricao,
 				status
 			) VALUES (
 				:id, 
 				:nome, 
+                :percentual_imposto,
 				:descricao,
 				:status
 			)";

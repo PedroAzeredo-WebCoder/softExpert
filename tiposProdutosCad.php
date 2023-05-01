@@ -12,12 +12,14 @@ if ($cad_tiposProdutos_id) {
     $query->addTable("cad_tipo_produto");
     $query->addcolumn("id");
     $query->addcolumn("nome");
+    $query->addcolumn("percentual_imposto");
     $query->addcolumn("descricao");
     $query->addcolumn("status");
     $query->addWhere("id", "=", $cad_tiposProdutos_id);
 
     foreach ($conn->query($query->getSQL()) as $row) {
         $f_nome = $row["nome"];
+        $f_percentual_imposto = $row["percentual_imposto"];
         $f_descricao = $row["descricao"];
         $f_status = "";
 
@@ -30,6 +32,7 @@ if ($cad_tiposProdutos_id) {
 $form = new Form("tiposProdutosCadSave.php");
 $form->addField(hiddenField($cad_tiposProdutos_id, "cad_tiposProdutos_id"));
 $form->addField(textField("Nome", $f_nome, NUll, true));
+$form->addField(textField("Percentual de Imposto", $f_percentual_imposto, "f_porcentagem", true));
 $form->addField(editorAreaField("Descrição", $f_descricao));
 $form->addField(checkboxField("Ativo", $f_status));
 $form->addField(submitBtn("Salvar"));
