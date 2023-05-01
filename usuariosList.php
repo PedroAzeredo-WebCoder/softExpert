@@ -9,7 +9,7 @@ $table->cardHeader(btn("Novo", "usuariosCad.php"));
 $table->addHeader("Nome");
 $table->addHeader("E-mail");
 $table->addHeader("Status",     "text-center", "col-1", false);
-$table->addHeader("Ação",       "text-center", "col-1", false);
+$table->addHeader("Editar",       "text-center", "col-1", false);
 
 $query = new sqlQuery();
 $query->addTable("cad_usuarios");
@@ -18,7 +18,6 @@ $query->addcolumn("nome");
 $query->addcolumn("email");
 $query->addcolumn("status");
 $query->addOrder("id", "DESC");
-$query->addWhere("tipo", "=", "'geral'");
 
 $f_searchTableStatus = getParam("f_searchTableStatus");
 if ($f_searchTableStatus || $f_searchTableStatus == "0") {
@@ -26,10 +25,6 @@ if ($f_searchTableStatus || $f_searchTableStatus == "0") {
 } else {
     $query->addWhere("status", "=", "'1'");
 }
-
-$query->setLimit(PAGINATION, $pagination->startLimit());
-
-$pagination->setSQL($query->getCount());
 
 if ($conn->query($query->getSQL())  && getDbValue($query->getCount()) != 0) {
     foreach ($conn->query($query->getSQL()) as $row) {
@@ -57,5 +52,4 @@ if ($conn->query($query->getSQL())  && getDbValue($query->getCount()) != 0) {
 $template = new Template("Listagem de Usuários");
 $template->addBreadcrumb("Home", "index.php");
 $template->addContent($table->writeHtml());
-$template->addContent($pagination->writeHtml());
 $template->writeHtml();

@@ -24,7 +24,7 @@ $dados = array(
     "id"              => $cad_usuarios_id,
     "nome"            => $f_nome,
     "email"           => $f_email,
-    "status"          => $f_ativo,
+    "status"          => $f_ativo
 );
 
 if (!empty($f_senha) && !empty($f_confirmar_senha)) {
@@ -36,22 +36,20 @@ if (!empty($cad_usuarios_id)) {
 		UPDATE cad_usuarios SET
             nome = :nome,
 			email = :email,
-			status = :status
-		WHERE
-			id = :id
+			status = :status,
+            dt_update = NOW()
 		";
 
-    if ($f_senha != "") {
-        $sql_update = "
-            UPDATE cad_usuarios SET
-                nome = :nome,
-                senha = :senha,
-                email = :email,
-                status = :status
-            WHERE
-                id = :id
-            ";
+
+    if ($f_ativo == "0") {
+        $sql_update .= ", dt_delete = NOW()";
     }
+    
+    if (!empty($f_senha)) {
+        $sql_update .= ", senha = :senha,";
+    }
+
+    $sql_update .= "WHERE id = :id";
 
     try {
         $conn->prepare($sql_update)->execute($dados);
@@ -76,14 +74,16 @@ if (!empty($cad_usuarios_id)) {
 				senha, 
 				email,
                 uniqid,
-				status
+				status,
+                dt_create
 			) VALUES (
 				:id, 
 				:nome, 
 				:senha, 
 				:email,
                 :uniqid, 
-				:status
+				:status,
+                NOW()
 			)";
 
     try {
