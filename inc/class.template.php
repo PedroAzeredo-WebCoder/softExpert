@@ -189,14 +189,12 @@ class Template
                 WHERE
                     aa.status = 1
                     AND aa.adm_menu_id = adm_menu.id
-                    AND aa.tipo = '" . getUserInfo('tipo') . "'
                 ) as subItens
             FROM
                 adm_menu 
             WHERE
                 status = 1
                 AND adm_menu_id IS NULL
-                AND tipo = '" . getUserInfo('tipo') . "'
             ORDER BY
                 nome ASC
         ";
@@ -225,7 +223,6 @@ class Template
                         WHERE
                             status = 1
                             AND adm_menu_id = {$row['id']}
-                            AND tipo = '" . getUserInfo('tipo') . "'
                         ORDER BY 
                             nome ASC
                     ";
