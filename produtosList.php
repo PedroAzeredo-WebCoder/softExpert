@@ -9,6 +9,7 @@ $table->cardHeader(btn("Novo", "produtosCad.php"));
 $table->addHeader("Nome");
 $table->addHeader("Preço");
 $table->addHeader("Quantidade");
+$table->addHeader("Tipo de Produto");
 $table->addHeader("Status",     "text-center", "col-1", false);
 $table->addHeader("Editar",       "text-center", "col-1", false);
 
@@ -18,6 +19,7 @@ $query->addcolumn("id");
 $query->addcolumn("nome");
 $query->addcolumn("preco");
 $query->addcolumn("quantidade");
+$query->addcolumn("(SELECT nome FROM cad_tipo_produto WHERE id = cad_produtos.cad_tipo_produto_id) AS tipo_produto");
 $query->addcolumn("status");
 $query->addOrder("id", "DESC");
 
@@ -39,6 +41,7 @@ if ($conn->query($query->getSQL())  && getDbValue($query->getCount()) != 0) {
         $table->addCol($row["nome"]);
         $table->addCol("R$ " . number_format($row["preco"], 2, ",", "."), "text-end");
         $table->addCol($row["quantidade"]);
+        $table->addCol($row["tipo_produto"]);
         $table->addCol($status, "text-center");
         $table->addCol(btn("<i data-feather='edit-3'></i>", ["produtosCad.php", ["cad_produtos_id" => $row["id"]]], NULL, "btn-sm"), "text-center");
         $table->endRow();
