@@ -31,8 +31,26 @@ if (!empty($f_senha) && !empty($f_confirmar_senha)) {
     $dados["senha"] = validar_senha($f_senha, $f_confirmar_senha);
 }
 
-if (!empty($cad_usuarios_id)) {
-    $sql_update = "
+$e = getParam("e", true);
+$cad_usuario_id_delete = $e["cad_usuario_id_delete"];
+if ($cad_usuario_id_delete) {
+    $sql_delete = "DELETE FROM cad_tipo_produto WHERE id = :id";
+
+    try {
+        $conn->prepare($sql_delete)->execute(array("id" => $cad_usuario_id_delete));
+        $actionText = "Exclusão efetuada com sucesso";
+        $tipo = 'success';
+    } catch (PDOException $e) {
+        $actionText = "Erro ao excluir";
+        $tipo = 'error';
+        writeLogs("==== " . __FILE__ . " ====", "error");
+        writeLogs("Action: DELETE SQL", "error");
+        writeLogs(print_r($e, true), "error");
+        writeLogs(printSQL($sql_delete, array("id" => $cad_usuario_id_delete), true), "error");
+    }
+} else {
+    if (!empty($cad_usuarios_id)) {
+        $sql_update = "
 		UPDATE cad_usuarios SET
             nome = :nome,
 			email = :email,
@@ -41,33 +59,33 @@ if (!empty($cad_usuarios_id)) {
 		";
 
 
-    if ($f_ativo == "0") {
-        $sql_update .= ", dt_delete = NOW()";
-    }
-    
-    if (!empty($f_senha)) {
-        $sql_update .= ", senha = :senha,";
-    }
+        if ($f_ativo == "0") {
+            $sql_update .= ", dt_delete = NOW()";
+        }
 
-    $sql_update .= "WHERE id = :id";
+        if (!empty($f_senha)) {
+            $sql_update .= ", senha = :senha,";
+        }
 
-    try {
-        $conn->prepare($sql_update)->execute($dados);
-        $lastInsertId = $cad_usuarios_id;
-        $actionText = "Alteração efetuada com sucesso";
-        $tipo = 'success';
-    } catch (PDOException $e) {
-        $actionText = "Erro ao alterar";
-        $tipo = 'error';
-        writeLogs("==== " . __FILE__ . " ====", "error");
-        writeLogs("Action: UPDATE SQL", "error");
-        writeLogs(print_r($e, true), "error");
-        writeLogs(printSQL($sql_update, $dados, true), "error");
-    }
-} else {
-    $dados["uniqid"] = uniqIdNew();
+        $sql_update .= "WHERE id = :id";
 
-    $sql_insert = "
+        try {
+            $conn->prepare($sql_update)->execute($dados);
+            $lastInsertId = $cad_usuarios_id;
+            $actionText = "Alteração efetuada com sucesso";
+            $tipo = 'success';
+        } catch (PDOException $e) {
+            $actionText = "Erro ao alterar";
+            $tipo = 'error';
+            writeLogs("==== " . __FILE__ . " ====", "error");
+            writeLogs("Action: UPDATE SQL", "error");
+            writeLogs(print_r($e, true), "error");
+            writeLogs(printSQL($sql_update, $dados, true), "error");
+        }
+    } else {
+        $dados["uniqid"] = uniqIdNew();
+
+        $sql_insert = "
 			INSERT INTO cad_usuarios (
 				id, 
 				nome, 
@@ -86,18 +104,19 @@ if (!empty($cad_usuarios_id)) {
                 NOW()
 			)";
 
-    try {
-        $conn->prepare($sql_insert)->execute($dados);
-        $lastInsertId = $conn->lastInsertId();
-        $actionText = "Cadastro efetuado com sucesso";
-        $tipo = 'success';
-    } catch (PDOException $e) {
-        $actionText = "Erro ao cadastrar";
-        $tipo = 'error';
-        writeLogs("==== " . __FILE__ . " ====", "error");
-        writeLogs("Action: Insert SQL", "error");
-        writeLogs(print_r($e, true), "error");
-        writeLogs(printSQL($sql_insert, $dados, true), "error");
+        try {
+            $conn->prepare($sql_insert)->execute($dados);
+            $lastInsertId = $conn->lastInsertId();
+            $actionText = "Cadastro efetuado com sucesso";
+            $tipo = 'success';
+        } catch (PDOException $e) {
+            $actionText = "Erro ao cadastrar";
+            $tipo = 'error';
+            writeLogs("==== " . __FILE__ . " ====", "error");
+            writeLogs("Action: Insert SQL", "error");
+            writeLogs(print_r($e, true), "error");
+            writeLogs(printSQL($sql_insert, $dados, true), "error");
+        }
     }
 }
 

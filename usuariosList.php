@@ -41,7 +41,7 @@ if ($conn->query($query->getSQL())  && getDbValue($query->getCount()) != 0) {
         $table->addCol($row["nome"]);
         $table->addCol($email);
         $table->addCol($status, "text-center");
-        $table->addCol(btn("<i data-feather='edit-3'></i>", ["usuariosCad.php", ["cad_usuarios_id" => $row["id"]]], NULL, "btn-sm"), "text-center");
+        $table->addCol(btn("<i data-feather='edit-3'></i>", ["usuariosCad.php", ["cad_usuarios_id" => $row["id"]]], NULL, "btn-sm") . btn("<i data-feather='x'></i>", ["usuariosCadSave.php", ["cad_usuario_id_delete" => $row["id"]]], NULL, "btn-sm text-danger bg-transparent mx-1"), "text-center");
         $table->endRow();
     }
 } else {
