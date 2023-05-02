@@ -20,7 +20,6 @@ if ($f_ativo == "on") {
 }
 
 $dados = array(
-    "id"                  => $cad_produtos_id,
     "nome"                => $f_nome,
     "preco"               => $f_preco,
     "quantidade"          => $f_quantidade,
@@ -32,6 +31,8 @@ $dados = array(
 $e = getParam("e", true);
 $cad_produtos_id_delete = $e["cad_produtos_id_delete"];
 if ($cad_produtos_id_delete) {
+    $dados["id"] = $cad_produtos_id_delete;
+
     $sql_delete = "DELETE FROM cad_produtos WHERE id = :id";
 
     try {
@@ -48,6 +49,8 @@ if ($cad_produtos_id_delete) {
     }
 } else {
     if (!empty($cad_produtos_id)) {
+        $dados["id"] = $cad_produtos_id;
+
         $sql_update = "
 		UPDATE cad_produtos SET
             nome = :nome,
@@ -77,7 +80,6 @@ if ($cad_produtos_id_delete) {
 
         $sql_insert = "
 			INSERT INTO cad_produtos (
-				id, 
 				nome, 
                 preco,
                 quantidade,
@@ -85,7 +87,6 @@ if ($cad_produtos_id_delete) {
                 descricao,
 				status
 			) VALUES (
-				:id, 
 				:nome, 
                 :preco,
                 :quantidade,

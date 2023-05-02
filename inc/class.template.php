@@ -171,32 +171,26 @@ class Template
     private function getSidebar(): string
     {
 
-        $conn = new PDO("mysql:host=" . DB_HOST . ";dbname=" . DB_DATABASE, DB_USER, DB_PASSWORD) or print($conn->errorInfo());
+        $conn = new PDO("pgsql:host=" . DB_HOST . ";port=5432;dbname=" . DB_DATABASE, DB_USER, DB_PASSWORD) or print($conn->errorInfo());
 
         $sql = "
-            SELECT
-                id,
-                adm_menu_id,
-                icone,
-                nome,
-                link,
-                status,
-                (
-                SELECT
-                    COUNT(*)
-                FROM
-                    adm_menu as aa
-                WHERE
-                    aa.status = 1
-                    AND aa.adm_menu_id = adm_menu.id
-                ) as subItens
-            FROM
-                adm_menu 
-            WHERE
-                status = 1
-                AND adm_menu_id IS NULL
-            ORDER BY
-                nome ASC
+        SELECT
+        id,
+        adm_menu_id,
+        icone,
+        nome,
+        link,
+        status,
+        (
+            SELECT COUNT(*)
+            FROM adm_menu AS aa
+            WHERE aa.status = true
+            AND aa.adm_menu_id = adm_menu.id
+        ) AS subItens
+        FROM adm_menu
+        WHERE status = true
+        AND adm_menu_id IS NULL
+        ORDER BY nome ASC;
         ";
 
         $menu = array();

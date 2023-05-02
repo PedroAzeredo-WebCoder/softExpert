@@ -10,10 +10,10 @@ $query->addcolumn("nome");
 $query->addcolumn("preco");
 $query->addcolumn("(SELECT nome FROM cad_tipo_produto WHERE id = cad_produtos.cad_tipo_produto_id) AS tipo_produto");
 $query->addcolumn("descricao");
-$query->addWhere("status", "=", "'1'");
+$query->addWhere("status", "=", "true");
 
+$card = array();
 if ($conn->query($query->getSQL())  && getDbValue($query->getCount()) != 0) {
-    $card = array();
     foreach ($conn->query($query->getSQL()) as $row) {
         $f_nome = $row["nome"];
         $f_preco = number_format($row["preco"], 2, ",", ".");

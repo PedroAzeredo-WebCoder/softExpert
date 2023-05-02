@@ -124,7 +124,7 @@ function checkAccess()
  */
 function getDbValue($sql)
 {
-	$conn = new PDO("mysql:host=" . DB_HOST . ";dbname=" . DB_DATABASE, DB_USER, DB_PASSWORD) or print($conn->errorInfo());
+	$conn = new PDO("pgsql:host=" . DB_HOST . ";port=5432;dbname=" . DB_DATABASE, DB_USER, DB_PASSWORD) or print($conn->errorInfo());
 	foreach ($conn->query($sql) as $row) {
 		return $row[0];
 	}

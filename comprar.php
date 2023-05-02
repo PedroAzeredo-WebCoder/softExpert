@@ -10,7 +10,6 @@ $cad_usuario_id        = getParam("cad_usuario_id");
 $f_quantidade          = getParam("quantidade");
 
 $dados = array(
-    "id"                  => NUll,
     "cad_produto_id"      => $cad_produto_id,
     "cad_usuario_id"      => $cad_usuario_id,
     "quantidade"        => $f_quantidade
@@ -18,14 +17,12 @@ $dados = array(
 
 $sql_insert = "
 INSERT INTO cad_compras(
-    id,
     cad_produto_id,
     cad_usuario_id,
     quantidade,
     dt_compra
 )
 VALUES(
-    :id,
     :cad_produto_id,
     :cad_usuario_id,
     :quantidade,
@@ -46,4 +43,4 @@ try {
 }
 
 setAlert($actionText, $tipo);
-redirect("produtos.php");
+redirect("index.php");

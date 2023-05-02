@@ -13,7 +13,7 @@ $query->addcolumn("id");
 $query->addcolumn("uniqid");
 $query->addWhere("email", "=", "'" . $f_usuario . "'");
 $query->addWhere("senha", "=", "'" . $f_senha . "'");
-$query->addWhere("status", "=", 1);
+$query->addWhere("status", "=", "true");
 $query->setLimit(1);
 
 try {

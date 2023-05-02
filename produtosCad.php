@@ -37,7 +37,7 @@ $tiposProdutos = new sqlQuery();
 $tiposProdutos->addTable("cad_tipo_produto");
 $tiposProdutos->addcolumn("id");
 $tiposProdutos->addcolumn("nome");
-$tiposProdutos->addWhere("status", "=", "1");
+$tiposProdutos->addWhere("status", "=", "true");
 
 if ($conn->query($tiposProdutos->getSQL()) && getDbValue($tiposProdutos->getCount()) != 0) {
     foreach ($conn->query($tiposProdutos->getSQL()) as $row) {

@@ -13,15 +13,14 @@ $f_confirmar_senha      = getParam("f_confirmar_senha");
 $f_ativo                = getParam("f_ativo");
 
 if ($f_ativo == "on") {
-    $f_ativo = "1";
+    $f_ativo = "true";
 } else {
-    $f_ativo = "0";
+    $f_ativo = "false";
 }
 
 validar_email($f_email);
 
 $dados = array(
-    "id"              => $cad_usuarios_id,
     "nome"            => $f_nome,
     "email"           => $f_email,
     "status"          => $f_ativo
@@ -34,7 +33,8 @@ if (!empty($f_senha) && !empty($f_confirmar_senha)) {
 $e = getParam("e", true);
 $cad_usuario_id_delete = $e["cad_usuario_id_delete"];
 if ($cad_usuario_id_delete) {
-    $sql_delete = "DELETE FROM cad_tipo_produto WHERE id = :id";
+    $dados["id"] = $cad_usuario_id_delete;
+    $sql_delete = "DELETE FROM cad_usuarios WHERE id = :id";
 
     try {
         $conn->prepare($sql_delete)->execute(array("id" => $cad_usuario_id_delete));
@@ -50,6 +50,9 @@ if ($cad_usuario_id_delete) {
     }
 } else {
     if (!empty($cad_usuarios_id)) {
+
+        $dados["id"] = $cad_usuarios_id;
+
         $sql_update = "
 		UPDATE cad_usuarios SET
             nome = :nome,
@@ -86,23 +89,24 @@ if ($cad_usuario_id_delete) {
         $dados["uniqid"] = uniqIdNew();
 
         $sql_insert = "
-			INSERT INTO cad_usuarios (
-				id, 
-				nome, 
-				senha, 
-				email,
-                uniqid,
-				status,
-                dt_create
-			) VALUES (
-				:id, 
-				:nome, 
-				:senha, 
-				:email,
-                :uniqid, 
-				:status,
-                NOW()
-			)";
+        INSERT INTO cad_usuarios (
+            nome, 
+            senha, 
+            email,
+            uniqid,
+            status,
+            dt_create
+        ) 
+        VALUES (
+            :nome, 
+            :senha, 
+            :email,
+            :uniqid, 
+            :status,
+            CURRENT_TIMESTAMP
+        )
+        RETURNING id;        
+		";
 
         try {
             $conn->prepare($sql_insert)->execute($dados);

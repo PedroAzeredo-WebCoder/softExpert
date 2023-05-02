@@ -23,7 +23,7 @@ $f_searchTableStatus = getParam("f_searchTableStatus");
 if ($f_searchTableStatus || $f_searchTableStatus == "0") {
     $query->addWhere("status", "=", "'0'");
 } else {
-    $query->addWhere("status", "=", "'1'");
+    $query->addWhere("status", "=", "true");
 }
 
 if ($conn->query($query->getSQL())  && getDbValue($query->getCount()) != 0) {

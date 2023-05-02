@@ -15,7 +15,7 @@ $query->addcolumn("quantidade");
 $query->addcolumn("(SELECT nome FROM cad_tipo_produto WHERE id = cad_produtos.cad_tipo_produto_id) AS tipo_produto");
 $query->addcolumn("(SELECT percentual_imposto FROM cad_tipo_produto WHERE id = cad_produtos.cad_tipo_produto_id ) AS percentual");
 $query->addcolumn("descricao");
-$query->addWhere("status", "=", "'1'");
+$query->addWhere("status", "=", "true");
 $query->addWhere("id", "=", $cad_produtos_id);
 
 if ($conn->query($query->getSQL())  && getDbValue($query->getCount()) != 0) {

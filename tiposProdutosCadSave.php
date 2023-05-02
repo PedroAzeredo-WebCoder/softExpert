@@ -18,7 +18,6 @@ if ($f_ativo == "on") {
 }
 
 $dados = array(
-    "id"                    => $cad_tiposProdutos_id,
     "nome"                  => $f_nome,
     "percentual_imposto"    => $f_percentual_imposto,
     "descricao"             => $f_descricao,
@@ -28,6 +27,7 @@ $dados = array(
 $e = getParam("e", true);
 $cad_tiposProdutos_id_delete = $e["cad_tiposProdutos_id_delete"];
 if ($cad_tiposProdutos_id_delete) {
+    $dados["id"] = $cad_tiposProdutos_id_delete;
     $sql_delete = "DELETE FROM cad_tipo_produto WHERE id = :id";
 
     try {
@@ -44,6 +44,7 @@ if ($cad_tiposProdutos_id_delete) {
     }
 } else {
     if (!empty($cad_tiposProdutos_id)) {
+        $dados["id"] = $cad_tiposProdutos_id;
         $sql_update = "
 		UPDATE cad_tipo_produto SET
             nome = :nome,
@@ -71,13 +72,11 @@ if ($cad_tiposProdutos_id_delete) {
 
         $sql_insert = "
 			INSERT INTO cad_tipo_produto (
-				id, 
 				nome, 
                 percentual_imposto,
                 descricao,
 				status
 			) VALUES (
-				:id, 
 				:nome, 
                 :percentual_imposto,
 				:descricao,
