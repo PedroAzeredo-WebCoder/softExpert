@@ -5,7 +5,7 @@ checkAccess("produtosList");
 writeLogs("==== " . __FILE__ . " ====", "access");
 writeLogs(print_r($_POST, true), "access");
 
-$cad_produtos_id   = getParam("cad_produtos_id");
+$cad_produtos_id        = getParam("cad_produtos_id");
 $f_nome                 = getParam("f_nome");
 $f_preco                = str_replace(array(',', 'R$'), array('.', ''), getParam("f_preco"));
 $f_quantidade           = getParam("f_quantidade");
@@ -29,8 +29,26 @@ $dados = array(
     "status"              => $f_ativo
 );
 
-if (!empty($cad_produtos_id)) {
-    $sql_update = "
+$e = getParam("e", true);
+$cad_produtos_id_delete = $e["cad_produtos_id_delete"];
+if ($cad_produtos_id_delete) {
+    $sql_delete = "DELETE FROM cad_produtos WHERE id = :id";
+
+    try {
+        $conn->prepare($sql_delete)->execute(array("id" => $cad_produtos_id_delete));
+        $actionText = "Exclusão efetuada com sucesso";
+        $tipo = 'success';
+    } catch (PDOException $e) {
+        $actionText = "Erro ao excluir";
+        $tipo = 'error';
+        writeLogs("==== " . __FILE__ . " ====", "error");
+        writeLogs("Action: DELETE SQL", "error");
+        writeLogs(print_r($e, true), "error");
+        writeLogs(printSQL($sql_delete, array("id" => $cad_produtos_id_delete), true), "error");
+    }
+} else {
+    if (!empty($cad_produtos_id)) {
+        $sql_update = "
 		UPDATE cad_produtos SET
             nome = :nome,
             preco = :preco,
@@ -42,22 +60,22 @@ if (!empty($cad_produtos_id)) {
             id = :id
     ";
 
-    try {
-        $conn->prepare($sql_update)->execute($dados);
-        $lastInsertId = $cad_produtos_id;
-        $actionText = "Alteração efetuada com sucesso";
-        $tipo = 'success';
-    } catch (PDOException $e) {
-        $actionText = "Erro ao alterar";
-        $tipo = 'error';
-        writeLogs("==== " . __FILE__ . " ====", "error");
-        writeLogs("Action: UPDATE SQL", "error");
-        writeLogs(print_r($e, true), "error");
-        writeLogs(printSQL($sql_update, $dados, true), "error");
-    }
-} else {
+        try {
+            $conn->prepare($sql_update)->execute($dados);
+            $lastInsertId = $cad_produtos_id;
+            $actionText = "Alteração efetuada com sucesso";
+            $tipo = 'success';
+        } catch (PDOException $e) {
+            $actionText = "Erro ao alterar";
+            $tipo = 'error';
+            writeLogs("==== " . __FILE__ . " ====", "error");
+            writeLogs("Action: UPDATE SQL", "error");
+            writeLogs(print_r($e, true), "error");
+            writeLogs(printSQL($sql_update, $dados, true), "error");
+        }
+    } else {
 
-    $sql_insert = "
+        $sql_insert = "
 			INSERT INTO cad_produtos (
 				id, 
 				nome, 
@@ -76,18 +94,19 @@ if (!empty($cad_produtos_id)) {
 				:status
 			)";
 
-    try {
-        $conn->prepare($sql_insert)->execute($dados);
-        $lastInsertId = $conn->lastInsertId();
-        $actionText = "Cadastro efetuado com sucesso";
-        $tipo = 'success';
-    } catch (PDOException $e) {
-        $actionText = "Erro ao cadastrar";
-        $tipo = 'error';
-        writeLogs("==== " . __FILE__ . " ====", "error");
-        writeLogs("Action: Insert SQL", "error");
-        writeLogs(print_r($e, true), "error");
-        writeLogs(printSQL($sql_insert, $dados, true), "error");
+        try {
+            $conn->prepare($sql_insert)->execute($dados);
+            $lastInsertId = $conn->lastInsertId();
+            $actionText = "Cadastro efetuado com sucesso";
+            $tipo = 'success';
+        } catch (PDOException $e) {
+            $actionText = "Erro ao cadastrar";
+            $tipo = 'error';
+            writeLogs("==== " . __FILE__ . " ====", "error");
+            writeLogs("Action: Insert SQL", "error");
+            writeLogs(print_r($e, true), "error");
+            writeLogs(printSQL($sql_insert, $dados, true), "error");
+        }
     }
 }
 

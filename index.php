@@ -41,6 +41,7 @@ if ($conn->query($query->getSQL())  && getDbValue($query->getCount()) != 0) {
 
 $dash = array();
 $dash[] = '
+<h3 class="fw-bolder">Lista de Produtos</h3>
 <div class="row">
     ' . implode("", $card) . '
 </div>
