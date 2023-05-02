@@ -430,7 +430,7 @@ jQuery(function () {
         minimumFractionDigits: 2,
       });
       countValorQtdElements.text(`R$ ${formattedValor}`);
-      $("#qtd").text(quantidade);
+      $(".qtd").text(quantidade).val(quantidade);
       $("#percentual-qtd").text(`R$ ${valorAdicional}`);
     }
 
@@ -457,7 +457,6 @@ jQuery(function () {
 
     quantityInput.on("input", updateValor);
 
-    // Call `updateValor()` initially to set the default values
     updateValor();
   });
 });
