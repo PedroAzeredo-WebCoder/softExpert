@@ -5,8 +5,6 @@ checkAccess("usuariosList");
 $e = getParam("e", true);
 $cad_usuarios_id = $e["cad_usuarios_id"];
 
-$f_acessos = array();
-
 $f_status = "checked";
 
 if ($cad_usuarios_id) {

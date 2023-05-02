@@ -1,43 +1,42 @@
 <?php
 require_once("./inc/common.php");
-checkAccess("usuariosList");
+checkAccess("produtosList");
 
 writeLogs("==== " . __FILE__ . " ====", "access");
 writeLogs(print_r($_POST, true), "access");
 
-$cad_usuarios_id        = getParam("cad_usuarios_id");
+$cad_produtos_id        = getParam("cad_produtos_id");
 $f_nome                 = getParam("f_nome");
-$f_email                = strtolower(getParam("f_email"));
-$f_senha                = getParam("f_senha");
-$f_confirmar_senha      = getParam("f_confirmar_senha");
+$f_preco                = str_replace(array(',', 'R$'), array('.', ''), getParam("f_preco"));
+$f_quantidade           = getParam("f_quantidade");
+$cad_tipo_produto_id    = getParam("cad_tipo_produto_id");
+$f_descricao            = getParam("f_descricao");
 $f_ativo                = getParam("f_ativo");
 
 if ($f_ativo == "on") {
-    $f_ativo = "true";
+    $f_ativo = "1";
 } else {
-    $f_ativo = "false";
+    $f_ativo = "0";
 }
-
-validar_email($f_email);
 
 $dados = array(
-    "nome"            => $f_nome,
-    "email"           => $f_email,
-    "status"          => $f_ativo
+    "nome"                => $f_nome,
+    "preco"               => $f_preco,
+    "quantidade"          => $f_quantidade,
+    "cad_tipo_produto_id" => $cad_tipo_produto_id,
+    "descricao"           => $f_descricao,
+    "status"              => $f_ativo
 );
 
-if (!empty($f_senha) && !empty($f_confirmar_senha)) {
-    $dados["senha"] = validar_senha($f_senha, $f_confirmar_senha);
-}
-
 $e = getParam("e", true);
-$cad_usuario_id_delete = $e["cad_usuario_id_delete"];
-if ($cad_usuario_id_delete) {
-    $dados["id"] = $cad_usuario_id_delete;
-    $sql_delete = "DELETE FROM cad_usuarios WHERE id = :id";
+$cad_produtos_id_delete = $e["cad_produtos_id_delete"];
+if ($cad_produtos_id_delete) {
+    $dados["id"] = $cad_produtos_id_delete;
+
+    $sql_delete = "DELETE FROM cad_produtos WHERE id = :id";
 
     try {
-        $conn->prepare($sql_delete)->execute(array("id" => $cad_usuario_id_delete));
+        $conn->prepare($sql_delete)->execute(array("id" => $cad_produtos_id_delete));
         $actionText = "Exclusão efetuada com sucesso";
         $tipo = 'success';
     } catch (PDOException $e) {
@@ -46,35 +45,27 @@ if ($cad_usuario_id_delete) {
         writeLogs("==== " . __FILE__ . " ====", "error");
         writeLogs("Action: DELETE SQL", "error");
         writeLogs(print_r($e, true), "error");
-        writeLogs(printSQL($sql_delete, array("id" => $cad_usuario_id_delete), true), "error");
+        writeLogs(printSQL($sql_delete, array("id" => $cad_produtos_id_delete), true), "error");
     }
 } else {
-    if (!empty($cad_usuarios_id)) {
-
-        $dados["id"] = $cad_usuarios_id;
+    if (!empty($cad_produtos_id)) {
+        $dados["id"] = $cad_produtos_id;
 
         $sql_update = "
-		UPDATE cad_usuarios SET
+		UPDATE cad_produtos SET
             nome = :nome,
-			email = :email,
-			status = :status,
-            dt_update = NOW()
-		";
-
-
-        if ($f_ativo == "0") {
-            $sql_update .= ", dt_delete = NOW()";
-        }
-
-        if (!empty($f_senha)) {
-            $sql_update .= ", senha = :senha,";
-        }
-
-        $sql_update .= "WHERE id = :id";
+            preco = :preco,
+            quantidade = :quantidade,
+            cad_tipo_produto_id = :cad_tipo_produto_id,
+			descricao = :descricao,
+			status = :status
+        WHERE
+            id = :id
+    ";
 
         try {
             $conn->prepare($sql_update)->execute($dados);
-            $lastInsertId = $cad_usuarios_id;
+            $lastInsertId = $cad_produtos_id;
             $actionText = "Alteração efetuada com sucesso";
             $tipo = 'success';
         } catch (PDOException $e) {
@@ -86,27 +77,23 @@ if ($cad_usuario_id_delete) {
             writeLogs(printSQL($sql_update, $dados, true), "error");
         }
     } else {
-        $dados["uniqid"] = uniqIdNew();
 
         $sql_insert = "
-        INSERT INTO cad_usuarios (
-            nome, 
-            senha, 
-            email,
-            uniqid,
-            status,
-            dt_create
-        ) 
-        VALUES (
-            :nome, 
-            :senha, 
-            :email,
-            :uniqid, 
-            :status,
-            CURRENT_TIMESTAMP
-        )
-        RETURNING id;        
-		";
+			INSERT INTO cad_produtos (
+				nome, 
+                preco,
+                quantidade,
+                cad_tipo_produto_id,
+                descricao,
+				status
+			) VALUES (
+				:nome, 
+                :preco,
+                :quantidade,
+                :cad_tipo_produto_id,
+				:descricao,
+				:status
+			)";
 
         try {
             $conn->prepare($sql_insert)->execute($dados);
@@ -125,4 +112,4 @@ if ($cad_usuario_id_delete) {
 }
 
 setAlert($actionText, $tipo);
-redirect("usuariosList.php");
+redirect("produtosList.php");

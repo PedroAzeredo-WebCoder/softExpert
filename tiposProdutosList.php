@@ -1,21 +1,23 @@
 <?php
 require_once("./inc/common.php");
-checkAccess("usuariosList");
+checkAccess("tiposProdutosList");
 
 $pagination = new Pagination();
 
 $table = new Table();
-$table->cardHeader(btn("Novo", "usuariosCad.php"));
+$table->cardHeader(btn("Novo", "tiposProdutosCad.php"));
 $table->addHeader("Nome");
-$table->addHeader("E-mail");
+$table->addHeader("Imposto");
+$table->addHeader("Descrição");
 $table->addHeader("Status",     "text-center", "col-1", false);
 $table->addHeader("Editar",       "text-center", "col-1", false);
 
 $query = new sqlQuery();
-$query->addTable("cad_usuarios");
+$query->addTable("cad_tipo_produto");
 $query->addcolumn("id");
 $query->addcolumn("nome");
-$query->addcolumn("email");
+$query->addcolumn("percentual_imposto");
+$query->addcolumn("descricao");
 $query->addcolumn("status");
 $query->addOrder("id", "DESC");
 
@@ -34,14 +36,11 @@ if ($conn->query($query->getSQL())  && getDbValue($query->getCount()) != 0) {
             $status = badge("Inativo", "danger");
         }
 
-        if (!empty($row["email"])) {
-            $email = "<a href='mailto:" . $row["email"] . "' target='_blank'>" . $row["email"] . "</a>";
-        }
-
         $table->addCol($row["nome"]);
-        $table->addCol($email);
+        $table->addCol($row["percentual_imposto"] . "%");
+        $table->addCol($row["descricao"]);
         $table->addCol($status, "text-center");
-        $table->addCol(btn("<i data-feather='edit-3'></i>", ["usuariosCad.php", ["cad_usuarios_id" => $row["id"]]], NULL, "btn-sm") . btn("<i data-feather='x'></i>", ["usuariosCadSave.php", ["cad_usuario_id_delete" => $row["id"]]], NULL, "btn-sm text-danger bg-transparent mx-1"), "text-center");
+        $table->addCol(btn("<i data-feather='edit-3'></i>", ["tiposProdutosCad.php", ["cad_tiposProdutos_id" => $row["id"]]], NULL, "btn-sm") . btn("<i data-feather='x'></i>", ["tiposProdutosCadSave.php", ["cad_tiposProdutos_id_delete" => $row["id"]]], NULL, "btn-sm text-danger bg-transparent mx-1"), "text-center");
         $table->endRow();
     }
 } else {
@@ -49,7 +48,7 @@ if ($conn->query($query->getSQL())  && getDbValue($query->getCount()) != 0) {
     $table->endRow();
 }
 
-$template = new Template("Listagem de Usuários");
+$template = new Template("Listagem de Tipos de Produtos");
 $template->addBreadcrumb("Home", "index.php");
 $template->addContent($table->writeHtml());
 $template->writeHtml();
