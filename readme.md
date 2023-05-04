@@ -83,7 +83,7 @@ Segue a continuação da melhoria do arquivo README.md:
 
 ## Funcionalidades
 
-O projeto XPTO possui as seguintes funcionalidades:
+O projeto SoftExpert possui as seguintes funcionalidades:
 
 - Cadastro de usuários, produtos e tipos de produtos.
 - Visualização, edição e exclusão de usuários, produtos e tipos de produtos.
